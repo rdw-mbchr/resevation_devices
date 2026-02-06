@@ -12,13 +12,15 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo '🔨 Building backend with Maven and running tests...'
-                sh 'mvn clean verify'
+                // Remplacé sh par bat pour Windows
+                bat 'mvn clean verify'
             }
         }
 
         stage('Archive Artifacts') {
             steps {
                 echo '📦 Archiving .jar files...'
+                bat 'if exist backend\\target\\*.jar echo Found JAR files'
                 archiveArtifacts artifacts: 'backend/target/*.jar', fingerprint: true
             }
         }
