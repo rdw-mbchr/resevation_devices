@@ -15,7 +15,9 @@ pipeline {
             steps {
                 echo '🔨 Building backend with Maven and running tests...'
                 // Remplacé sh par bat pour Windows
-                bat 'mvn clean verify'
+                dir('backend') {          // ici on "entre" dans le dossier backend
+                    bat 'mvn clean verify' // bat = commande Windows
+              }
             }
         }
 
