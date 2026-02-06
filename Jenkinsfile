@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    tools {
+        maven 'Maven-3.9' // Nom de Maven configuré dans Jenkins → Global Tool Configuration
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -13,7 +15,7 @@ pipeline {
             steps {
                 echo '🔨 Building backend with Maven and running tests...'
                 // Remplacé sh par bat pour Windows
-                bat 'mvn clean verify'
+                bat '"%MAVEN_HOME%\\bin\\mvn" clean verify'
             }
         }
 
