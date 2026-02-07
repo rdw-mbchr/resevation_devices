@@ -1,8 +1,10 @@
 pipeline {
     agent any
+
     tools {
-        maven 'Maven-3.9' // Nom de Maven configuré dans Jenkins → Global Tool Configuration
+        maven 'Maven-3.9'
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -14,17 +16,32 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo '🔨 Building backend with Maven and running tests...'
-                // Remplacé sh par bat pour Windows
-                dir('backend') {          // ici on "entre" dans le dossier backend
-                    bat 'mvn clean verify' // bat = commande Windows
-              }
+                dir('backend') {
+                    bat 'mvn clean verify'
+                }
+            }
+        }
+
+        stage('SonarCloud Analysis') {
+            steps {
+                echo '🔍 Running SonarCloud analysis...'
+                dir('backend') {
+                    withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
+                        bat """
+                        mvn sonar:sonar ^
+                        -Dsonar.projectKey=rdw-mbchr_resevation_devices ^
+                        -Dsonar.organization=rdw-mbchr ^
+                        -Dsonar.host.url=https://sonarcloud.io ^
+                        -Dsonar.login=%SONAR_TOKEN%
+                        """
+                    }
+                }
             }
         }
 
         stage('Archive Artifacts') {
             steps {
                 echo '📦 Archiving .jar files...'
-                bat 'if exist backend\\target\\*.jar echo Found JAR files'
                 archiveArtifacts artifacts: 'backend/target/*.jar', fingerprint: true
             }
         }
@@ -32,11 +49,12 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build and tests completed successfully!'
+            echo '✅ Build, tests and SonarCloud analysis completed successfully!'
         }
         failure {
-            echo '❌ Build or tests failed!'
+            echo '❌ Pipeline failed!'
         }
     }
 }
+
 
