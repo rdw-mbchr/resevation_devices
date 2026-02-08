@@ -22,8 +22,8 @@ jobs:
       - name: Build and push Backend
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/reservation-backend:v1.0
       
@@ -33,4 +33,4 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/reservation-frontend:v1.0
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/reservation-frontend:v1.0UB_USERNAME }}/reservation-frontend:v1.0
